@@ -1,6 +1,6 @@
-# doc_truyen_tranh
+# ComicScraper
 
-A new Flutter project.
+Một app nhỏ được thực hiện bởi CHITUANH và JELLY
 
 ## Getting Started
 
