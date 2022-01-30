@@ -20,6 +20,14 @@ class ComicNettruyenProvider {
     }
   }
 
+  loadComic(String url) async {
+    final urlXin = Uri.parse(url);
+    if (await domain.loadWebPage(urlXin.path)) {
+      print('vào đây');
+      return getInfoComic();
+    }
+  }
+
   getTruyenDeCu() {
     final res = [];
     domain.getElement('$addressTruyenDuCu > div > h3 > a', ['href', 'title']).forEach((element) {
@@ -98,6 +106,77 @@ class ComicNettruyenProvider {
       if (e.isNotEmpty) res[i]['listChapter'][2]['time'] = e['title'];
       i++;
     });
+
+    return res;
+  }
+
+  getInfoComic() {
+    final res = {};
+
+    domain.getElement('html > body > form > main > div > div > div > article > h1', []).forEach((e) {
+      res['name'] = e['title'];
+    });
+    domain.getElement('html > body > form > main > div > div > div > article > div > div > div > img', ['src']).forEach((e) {
+      res['image'] = 'http:' + e['attributes']['src'];
+    });
+    domain.getElement('html > body > form > main > div > div > div > article > time', []).forEach((e) {
+      res['timeUpdate'] = e['title'].toString().trim();
+    });
+    domain.getElement('html > body > form > main > div > div > div > article > div > div > div > ul > li.author.row > p', []).forEach((e) {
+      res['author'] = e['title'].toString().trim();
+    });
+    domain.getElement('html > body > form > main > div > div > div > article > div > div > div > ul > li.author.row > p', []).forEach((e) {
+      res['author'] = e['title'].toString().trim();
+    });
+    domain.getElement('html > body > form > main > div > div > div > article > div > div > div > ul > li.status.row > p', []).forEach((e) {
+      res['status'] = e['title'].toString().trim();
+    });
+
+    domain.getElement('html > body > form > main > div > div > div > article > div > div > div > ul > li.status.row > p', []).forEach((e) {
+      res['status'] = e['title'].toString().trim();
+    });
+    // res['kind'] = [];
+    // domain.getElement('html > body > form > main > div > div > div > article > div > div > div > ul > li.kind.row > p > a', ['href']).forEach((e) {
+    //   res['kind'].add({
+    //     'kind_title': e['title'],
+    //     'kind_href': e['attributes']['href'],
+    //   });
+    // });
+
+    domain.getElement('html > body > form > main > div > div > div > article > div > div > div > div.mrt5.mrb10 > span', []).forEach((e) {
+      res['rank'] = e['title'].toString().trim().split(' - ').first;
+      res['evaluate'] = int.parse(e['title'].toString().trim().split(' - ').last.split(' ').first);
+    });
+
+    domain.getElement('html > body > form > main > div > div > div > article > div > div > div > div.follow > span', []).forEach((e) {
+      res['follow'] = e['title'].toString().trim().split(' ').first;
+    });
+
+    // domain.getElement('html > body > form > main > div > div > div > article > div.detail-content > p', []).forEach((e) {
+    //   res['content'] = e['title'].toString().trim().replaceAll('\n', ' ');
+    // });
+
+    res['list_chapter'] = [];
+    domain.getElement('html > body > form > main > div > div > div > article > div.list-chapter > nav > ul > li > div > a', ['href']).forEach((e) {
+      res['list_chapter'].add({
+        'name': e['title'].toString().trim(),
+        'href': e['attributes']['href'].toString().trim(),
+      });
+    });
+    int i = 0;
+    domain.getElement(
+        'html > body > form > main > div > div > div > article > div.list-chapter > nav > ul > li > div.col-xs-4.text-center.small', []).forEach((e) {
+      res['list_chapter'][i]['time'] = e['title'].trim();
+      i++;
+    });
+    i = 0;
+    domain.getElement(
+        'html > body > form > main > div > div > div > article > div.list-chapter > nav > ul > li > div.col-xs-3.text-center.small', []).forEach((e) {
+      res['list_chapter'][i]['view'] = e['title'].trim();
+      i++;
+    });
+
+    // /html/body/form/main/div[2]/div/div[1]/article/div[3]/nav/ul
 
     return res;
   }
